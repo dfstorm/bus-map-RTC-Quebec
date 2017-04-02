@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>SailRTC</title>
+    <title>Bus Map RTC Quebec</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/leaflet.css" />
     <link rel="stylesheet" href="css/bootstrap.min.css" />
@@ -17,7 +17,10 @@ html, body, {
     height: 100%;
 }
 #map {
-  height: 40%;
+  height: 100%;
+}
+h4 {
+  float:left;
 }
 .fr {
   float: right;
@@ -28,12 +31,24 @@ html, body, {
 .leaflet-control-attribution {
   display:none;
 }
+#canvas {
+  position: fixed;
 
+  box-shadow: 0px 0px 5px #000;
+  width:400px;
+  background: #fff;
+  z-index:9999;
+  height: 60%;
+  bottom: 0px;
+  right: 0px;
+  overflow-y: scroll;
+  overflow-x:hidden;
+}
 
     </style>
   </head>
   <body>
-    <div id="canvas" style="position: fixed; width:100%; height: 60%; bottom: 0px; overflow-y: scroll; overflow-x:hidden;"></div>
+    <div id="canvas" style=""></div>
     <div id="map"></div>
     <script src="data/stops.js"></script>
     <script src="data/routes.js"></script>
@@ -75,7 +90,7 @@ html, body, {
         objTimeStopByTripsId : {},        // TimeStopData by Trip
         objActiveStops : {},              // Stops present witin flMaxRange
 
-        flMaxRange : 0.0005,               // Max range for stop.
+        flMaxRange : 0.05,               // Max range for stop.
 
         objActualMapPosition : false,     // actual map position object
         objPointIcon : false,
@@ -146,8 +161,8 @@ html, body, {
               fsLat > parseFloat(ecoSail.objActualMapPosition.lat - ecoSail.flMaxRange ) &&
               fsLat < parseFloat(ecoSail.objActualMapPosition.lat +  ecoSail.flMaxRange ) &&
               fsLon > parseFloat(ecoSail.objActualMapPosition.lng - ecoSail.flMaxRange ) &&
-              fsLon < parseFloat(ecoSail.objActualMapPosition.lng +  ecoSail.flMaxRange ) &&
-              iZoom > 14
+              fsLon < parseFloat(ecoSail.objActualMapPosition.lng +  ecoSail.flMaxRange )
+            //  iZoom > 14
             ) {
               ecoSail.objActiveStops[ecoSail.objStops[i].stop_id] = ecoSail.objStops[i];
               ecoSail.objActiveStops[ecoSail.objStops[i].stop_id].arrRoutes = {};
@@ -157,7 +172,7 @@ html, body, {
             }
           }
           // activate only if zoom > 14
-          if(iZoom > 14) {
+          //if(iZoom > 14) {
             // build strop array
             var arrStopIndexes = [];
             for(var iStop in ecoSail.objActiveStops) {
@@ -180,7 +195,7 @@ html, body, {
                 }
               }
             }
-          }
+          //}
           var objLocationSubArray = {};
 
           for(var s in ecoSail.objActiveStops) {
@@ -304,7 +319,7 @@ html, body, {
           var sHtml = '';
           sHtml += ecoSail.fncGetStopHeaderHtml(s);
 
-          sHtml += '<div class="container-fluid" style="padding:59px 0px 0px 0px;margin: 0px;"><div class="row"><div class="col-md-4">';
+          sHtml += '<div class="container-fluid" style="padding:0px 0px 0px 0px;margin: 0px;">';
           sHtml += '<table class="table table-striped" style="">';
 
 
@@ -355,7 +370,7 @@ html, body, {
             sHtml += '<tr><td><center>'+ecoSail.strNoTime+'</center></td></tr>';
           }
           sHtml += '</table>';
-          sHtml += '</div></div></div>';
+          sHtml += '</div>';
           $('#canvas').html(sHtml);
         },
 
@@ -364,11 +379,11 @@ html, body, {
           ecoSail.objMapLinesLayer.clearLayers();
           if(ecoSail.objTimeStopByTripsId[iTipId] !== undefined) {
 
-            sHtml += '<div class="container-fluid" style="position: fixed; height: 60px; z-index: 999; background: #fff; width: 100%; margin-top: -1px;"><div class="row"><div class="col-md-12">';
+            sHtml += '<div class="container-fluid" style=" "><div class="row"><div class="col-md-12">';
             sHtml += '<h4><strong>' + ecoSail.objActiveStops[iStopIndex].arrRoutes[iRoute].route_short_name + '</strong> '+ ecoSail.objActiveStops[iStopIndex].arrRoutes[iRoute].route_desc + '</h4>';
             sHtml += '</div></div></div>';
 
-            sHtml += '<div class="container-fluid" style="padding:59px 0px 0px 0px;margin: 0px;"><div class="row"><div class="col-md-4">';
+            sHtml += '<div class="container-fluid" style="padding:0px 0px 0px 0px;margin: 0px;">';
             sHtml += '<table class="table table-striped" style="">';
             var pathLine = L.polyline([]).addTo(ecoSail.objMapLinesLayer);
 
@@ -385,14 +400,14 @@ html, body, {
           }
 
           sHtml += '</table>';
-          sHtml += '</div></div></div>';
+          sHtml += '</div>';
 
           $('#canvas').html(sHtml);
         },
 
         fncGetStopHeaderHtml : function fncGetStopHeaderHtml(s) {
           var sHtml = '';
-          sHtml += '<div class="container-fluid" style="position: fixed; height: 60px; z-index: 999; background: #fff; width: 100%; margin-top: -1px;"><div class="row"><div class="col-md-12">';
+          sHtml += '<div class="container-fluid" style=""><div class="row"><div class="col-md-12">';
           sHtml += '<h4>'+ ecoSail.objActiveStops[s].stop_id + '<br><strong>' + ecoSail.objActiveStops[s].stop_name + '</strong></h4>';
           sHtml += '</div></div></div>';
           return sHtml;
@@ -404,7 +419,7 @@ html, body, {
 
           sHtml += ecoSail.fncGetStopHeaderHtml(s);
 
-          sHtml += '<div class="container-fluid" style="padding:59px 0px 0px 0px;margin: 0px;"><div class="row"><div class="col-md-4">';
+          sHtml += '<div class="container-fluid" style="padding:0px 0px 0px 0px;margin: 0px;">';
           sHtml += '<table class="table table-striped" style="">';
 
           var sActiveHtml = '';
@@ -479,7 +494,7 @@ html, body, {
 
 
 
-          sHtml += '</div></div></div>';
+          sHtml += '</div>';
 
 
           $('#canvas').html(sHtml);
